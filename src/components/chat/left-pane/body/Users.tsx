@@ -19,12 +19,14 @@ type TDatabaseUser = {
 export const Users = () => {
     const { user, tab } = useAppContext()
     const [onlineUsers, setOnlineUsers] = useState<TReceiver[]>([])
+    const [activeChatUsers, setActiveChatUsers] = useState<TReceiver[]>([])
 
     useEffect(() => {
         const dbref = ref(realtimeDB, 'users')
 
         const unsubscribe = onValue(dbref, (snapshot) => {
             const onlineUserList: TUser[] = []
+            const allUsers = new Map<string, TUser>()
             const userConversations = new Map<string, string>();
             snapshot.forEach((childSnapshot) => {
                 const val: TDatabaseUser = childSnapshot.val()
@@ -40,6 +42,11 @@ export const Users = () => {
                         userConversations.set(userId, conversationId)
                     })
                 }
+                allUsers.set(val.id, {
+                    id: val.id,
+                    username: val.username,
+                    email: val.email
+                })
             })
             const updatedList: TReceiver[] = onlineUserList.map((onlineUserObj) => {
                 if (userConversations.has(onlineUserObj.id)) {
@@ -49,6 +56,20 @@ export const Users = () => {
                 return {...onlineUserObj, conversationId: uuidV4()}
             })
             setOnlineUsers(updatedList)
+
+            const activeChatUsers: TReceiver[] = []
+            userConversations.forEach((conversationId, userId) => {
+                if (allUsers.has(userId)) {
+                    const activeChatUser = allUsers.get(userId)
+                    if (activeChatUser) {
+                        activeChatUsers.push({
+                            ...activeChatUser,
+                            conversationId
+                        })
+                    }
+                }
+            })
+            setActiveChatUsers(activeChatUsers)
         })
 
         return () => unsubscribe()
@@ -59,7 +80,7 @@ export const Users = () => {
             <Navbar />
             <div className={styles.users}>
                 {
-                    (tab === 'online' ? onlineUsers : []).map((onlineUser) => <UserOption key={onlineUser.id} receiver={onlineUser}/>)
+                    (tab === 'online' ? onlineUsers : activeChatUsers).map((onlineUser) => <UserOption key={onlineUser.id} receiver={onlineUser}/>)
                 }
             </div>
         </div>
