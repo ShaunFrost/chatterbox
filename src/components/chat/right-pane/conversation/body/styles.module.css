@@ -1,0 +1,51 @@
+.container {
+    flex-grow: 1;
+    overflow: scroll;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.bubble-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.message-bubble {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.bubble {
+    width: 100%;
+}
+
+.status {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.status.seen svg{
+    color: var(--neutral)!important;
+    stroke: var(--neutral);
+    fill: var(--neutral);
+}
+
+.message-bubble.sent {
+    background-color: var(--sent);
+}
+
+.message-bubble.received {
+    background-color: var(--received);
+}
+
+.bubble-wrapper:has(.message-bubble.sent){
+    justify-content: flex-end;
+}

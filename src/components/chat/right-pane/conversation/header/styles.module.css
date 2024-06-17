@@ -1,0 +1,15 @@
+.container {
+    padding: 10px;
+    width: 100%;
+    background-color: var(--secondary);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 10px;
+}
+
+.user {
+    font-size: 1.5em;
+}
